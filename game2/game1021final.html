@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  cursor: url(./img/cccc.png)  0 30,auto;
+}
+body{ 
+  background-image: url(./img/ggattack.gif) ;
+  background-size: 100%;
+  background-position: 0% 0%;
+  cursor: url(./img/cccc.png)  0 30,auto;
+
+}
+.container{
+  
+  position: absolute;
+  top: 40%;
+  left: 45%;
+  color: rgb(255, 0, 0);
+  font-weight: bold;
+  font-size: 2rem;
+  cursor: url(./img/cccc.png)  0 30,auto;
+}
+#start{
+  width: 200px;
+  height: 50px;
+  background-color: crimson;
+  color: white;
+  border-radius: 50px;
+  box-shadow: 0px 0px 10px gray;
+  font-weight: bold;
+  font-size: 1.5rem;
+  cursor: url(./img/cccc.png)  0 30,auto;
+}
+#game{
+  position: relative;
+  top: -100px;
+
+}
+
+.holes {
+		width: 75px;
+		height: 75px;
+		/* border: 1px solid black; */
+    
+	}
+	.red {
+    position: absolute;
+		background:url(./img/lemen.png) center/cover;
+    background-size: 200%;
+    animation: ani 2s  infinite linear;
+	}
+
+	.blue {
+    position: absolute;
+		background:url(./img/deadmen.png)  center/cover;
+    background-size: 200%;
+    animation: ani2 2s infinite linear;
+	}
+
+  @keyframes ani{
+    0%{ transform: translate(-600px,100px); }
+    50%{transform: translate(0px,-200px); }
+  
+    100%{transform: translate(500px,0px);}
+  }
+
+    @keyframes ani2{
+    0%{ right: -250px;
+      transform: translate(0,130px);}
+  
+    100%{right: -300px;
+      transform: translate(0,800px);}
+
+  }
+
+  #ggg{
+    width: 700px;
+    position: absolute;
+    bottom: 50px;
+    right: 160px;
+    z-index: -1;
+
+  }
+  #ggg2{
+    width: 700px;
+    position: absolute;
+    bottom: 50px;
+    right: 160px;
+    z-index: 5;
+
+  }
+  #lili{
+    position: absolute;
+    width: 300px;
+    bottom: 0;
+    left: 500px;
+  }
+  #logo{
+    position: absolute;
+    top: 50px;
+    left: 50px;
+  }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <table id="game">
+      <tr>
+      
+        <td class="holes" id="hole11"></td>
+        <td class="holes" id="hole12"></td>
+        <td class="holes" id="hole13"></td>
+        <td class="holes" id="hole14"></td>
+        <td class="holes" id="hole15"></td>
+      </tr>
+      <tr>
+      
+        <td class="holes" id="hole6"></td>
+        <td class="holes" id="hole7"></td>
+        <td class="holes" id="hole8"></td>
+        <td class="holes" id="hole9"></td>
+        <td class="holes" id="hole10"></td>
+      </tr>
+      <tr>
+        <td class="holes" id="hole1"></td>
+        <td class="holes" id="hole2"></td>
+        <td class="holes" id="hole3"></td>
+        <td class="holes" id="hole4"></td>
+        <td class="holes" id="hole5"></td>
+      </tr>
+    </table>
+    <input type="button" value="開動" id="start"> <br>
+    目前吃幾隻: <span id="scoretext">0</span> 
+    <hr>
+    最多隻: <br>
+    玩家:<span id="highnametext">沒有人</span> <br>
+    數量:<span id="highscoretext">0</span> 隻<br>
+    
+  </div>
+    
+    <img  id="ggg" src="./img/GGMEN.png" alt="">
+    <img  id="ggg2" src="./img/GGmen2.png" alt="">
+    <img src="./img/lili.png" id="lili" alt="">
+    <img src="./img/logo.png" id="logo">
+    <script>
+      let score = 0;
+	let ingame = false;
+	let gameTimer = 0;
+	let highscore = { name: "", score: 0}
+	let highscorestorage = JSON.parse(window.localStorage.getItem("highscore"));
+
+	const holes = document.getElementsByClassName("holes");
+	const start = document.getElementById("start");
+	const scoretext = document.getElementById("scoretext");
+	const highscoretext = document.getElementById("highscoretext");
+	const highnametext = document.getElementById("highnametext");
+	if(highscorestorage !== null){
+		highscore = highscorestorage;
+		highnametext.innerText = highscore.name;
+		highscoretext.innerText = highscore.score;
+	}
+
+	start.onclick = function(){
+		console.log("game start");
+		this.disabled = true;
+		gameTimer = setInterval(game, 2000);
+		game();
+		ingame = true;
+		score = 0;
+		scoretext.innerText = score;
+		setTimeout(end, 10000);
+	}
+
+	const end = () => {
+		ingame = false;
+		clearInterval(gameTimer);
+		for(let hole of holes){
+			hole.classList.remove("red");
+			hole.classList.remove("blue");
+			// hole.classList.remove("ani");
+		}
+		start.disabled = false;
+		alert("你抓到"+score+"隻兵長了");
+		if(highscorestorage == null || highscorestorage.score < score){
+			let playername = prompt("最高隻!，請輸入你的名字");
+			highscore.name = playername;
+			highscore.score = score;
+			window.localStorage.setItem("highscore", JSON.stringify(highscore));
+			highnametext.innerText = highscore.name;
+			highscoretext.innerText = highscore.score;
+		}
+	}
+
+	const game = () => {
+		for(let hole of holes){
+			hole.classList.remove("red");
+			hole.classList.remove("blue");
+		}
+		for(let i=0;i<5; i++){
+			const rand = Math.floor(Math.random()*15);
+			holes[rand].classList.add("red");
+			// holes[rand].classList.add("ani2");
+		}
+	}
+
+	for(let hole of holes) {
+		hole.onclick = (event) => {
+      const target = event.target;
+			if(target.classList.contains("red")){
+        target.classList.add("blue");
+				target.classList.remove("red");
+				score++;
+				scoretext.innerText = score;
+			}
+		}
+	}
+	
+  document.onkeydown = (event) => {
+    const key = event.key;
+    if(!isNaN(key) && ingame) {
+      const target = document.getElementById(`hole${key}`);
+      if(target.classList.contains("red")){
+				target.classList.add("blue");
+				target.classList.remove("red");
+				score++;
+				scoretext.innerText = score;
+			}
+    }
+  }
+
+
+  </script>
+</body>
+</html>
